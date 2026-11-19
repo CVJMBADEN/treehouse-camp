@@ -53,7 +53,7 @@ try {
   const account = await api('/user');
   console.log('Authenticated GitHub account: ' + account.login);
   const repoPath = '/repos/CVJMBADEN/treehouse-camp';
-  const repo = await api(repoPath);
+  let repo = await api(repoPath);
   async function configurePages() {
     let pages;
     try { pages = await api(repoPath + '/pages'); }
@@ -72,6 +72,18 @@ try {
       pages = await api(repoPath + '/pages');
     }
     console.log(JSON.stringify({ pagesUrl: pages.html_url, buildType: pages.build_type, status: pages.status }, null, 2));
+  }
+  if (process.argv.includes('--make-public')) {
+    if (repo.private) {
+      // Only use this flag after the owner explicitly authorizes public visibility.
+      repo = await api(repoPath, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibility: 'public' }),
+      });
+    }
+    if (repo.private || repo.visibility !== 'public') throw new Error('Public repository visibility was not confirmed.');
+    console.log('Confirmed public repository: ' + repo.html_url);
+    await configurePages();
   }
   if (process.argv.includes('--pages-status')) {
     const pages = await api(repoPath + '/pages');

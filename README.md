@@ -26,7 +26,7 @@ The ZIP archive contains the **contents** of `dist/`, with `index.html` at its r
 
 The `.github/workflows/deploy-pages.yml` workflow publishes the ready-to-host `dist/` directory whenever its files change on `main`. It can also be run manually from the Actions tab. It uploads only the static website; the original snapshot and development scripts are not included in the published website.
 
-In repository **Settings → Pages**, choose **GitHub Actions** as the build and deployment source. GitHub Pages must be supported by the organization's plan for this private repository; the workflow does not change repository visibility. No personal access token is stored in the workflow: it uses GitHub's temporary `GITHUB_TOKEN` and deployment identity.
+In repository **Settings → Pages**, choose **GitHub Actions** as the build and deployment source. This repository is public so GitHub Pages can use the organization's free plan. The workflow itself does not change repository visibility. No personal access token is stored in the workflow: it uses GitHub's temporary `GITHUB_TOKEN` and deployment identity.
 
 For `CVJMBADEN/treehouse-camp`, the default project address is **https://cvjmbaden.github.io/treehouse-camp/**. The address **https://treehouse-camp.github.io/** requires ownership of an account or organization named `treehouse-camp` and a repository under it named `treehouse-camp.github.io`. A GitHub Pages subdomain cannot be chosen independently of the account or organization name.
 
