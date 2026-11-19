@@ -1,0 +1,20 @@
+{
+  "name": "treehouse-camp-static",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CMS-free static copy of treehouse-camp.eu",
+  "scripts": {
+    "download": "node scripts/download.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node scripts/test-interactions.mjs",
+    "start": "node scripts/serve.mjs",
+    "preview": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@azure/static-web-apps-cli": "^2.1.0",
+    "cheerio": "^1.2.0",
+    "jsdom": "^31.0.1"
+  }
+}

@@ -1,0 +1,46 @@
+/* Standalone behavior and accessibility fixes for the preserved original theme. */
+[hidden] { display: none !important; }
+.skip-link { position: fixed; top: -100px; left: 16px; z-index: 10001; background: white; color: #13462e; padding: 12px; }
+.skip-link:focus { top: 16px; }
+:focus-visible { outline: 3px solid #bd9b49; outline-offset: 4px; }
+button { font: inherit; cursor: pointer; }
+.accordion > .accordionItem > .accordionContent { height: auto !important; }
+.accordionHeader[role="button"]:focus-visible { outline-offset: -4px; }
+nav.main { overflow: visible; height: auto !important; }
+nav.main li { position: relative; }
+nav.main > ul > li > ul { position: static; width: auto; visibility: visible; opacity: 1; }
+nav.main > ul > li > ul > li { transform: none; margin: 4px 0 4px 16px; }
+nav.main > ul > li > ul li ul { height: auto; overflow: visible; }
+nav.main > ul > li > ul li .navLink { padding: 10px 38px 10px 12px; }
+nav.main > ul > li > ul li ul li { margin: 4px 0 4px 12px; }
+.submenu-toggle { position: absolute; right: 4px; top: 5px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: transparent; color: white; font-size: 24px; line-height: 1; }
+.submenu-toggle:hover { background: #13462e; }
+#mainAside { max-height: 100vh; overflow-y: auto; }
+#innerAside { padding-bottom: 75px; }
+#asideNavigation { overflow: visible; }
+#innerAside:after { display: none; }
+#burger { border: 0; background: transparent; }
+.menu-close { display: none; }
+@media (max-width:1199px) {
+  .menu-close { display: block; margin: 8px 0 16px auto; border: 1px solid currentColor; color: white; background: transparent; border-radius: 6px; padding: 8px 12px; }
+  body.menu-open { overflow: hidden; }
+  body:not(.js-ready) #mainAside { position: relative; width: auto; transform: none; }
+  body:not(.js-ready) #mobileHeader { display: none; }
+}
+@media (min-width:1200px) { #innerAside { margin-top: 40px; margin-bottom: 40px; } }
+.interactive .main_group [data-href]:hover, .interactive .main_group [data-href]:focus-visible { filter: brightness(1.08); }
+.interactive .info-wrap { pointer-events: none; }
+.interactive .info-wrap .info { visibility: hidden; }
+.interactive .info-wrap .info.active { visibility: visible; }
+.interactive .legend .opener[role="button"]:focus-visible { outline-offset: 2px; }
+body:not(.js-ready) .interactive .legendNavigation { width: auto; height: auto; }
+.static-lightbox { max-width: 95vw; max-height: 95vh; border: 0; border-radius: 8px; padding: 12px; background: white; }
+.static-lightbox::backdrop { background: rgb(0 0 0 / 85%); }
+.static-lightbox img { display: block; max-width: 85vw; max-height: 78vh; width: auto; height: auto; object-fit: contain; margin: auto; }
+.lightbox-controls { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 12px; }
+.lightbox-controls button { padding: 8px 16px; border: 0; border-radius: 6px; background: #13462e; color: white; }
+.static-lightbox figcaption { padding: 12px; text-align: center; }
+.filter-status { font-size: 16px; }
+.puzzle__opener-info { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+@media print { #mainAside, #mobileHeader, .skip-link { display: none !important; } #mainContent { padding: 0 !important; } .accordionContent[hidden] { display: block !important; } }
