@@ -55,6 +55,13 @@ try {
     console.log('Read-only access check completed. No files uploaded or repository changes made.');
     process.exit(0);
   }
+  const syncExisting = process.argv.includes('--sync-existing');
+  if (syncExisting) {
+    if (git(['remote', 'get-url', 'origin']) !== repo.clone_url) throw new Error('Unexpected Git remote.');
+    const currentRemote = await api(repoPath + '/commits/main');
+    git(['merge-base', '--is-ancestor', currentRemote.sha, 'HEAD']);
+  }
+  if (!syncExisting) {
   const existingHead = spawnSync('git', ['rev-parse', '--verify', 'HEAD'], { encoding: 'utf8', windowsHide: true });
   if (existingHead.status === 0) throw new Error('Local checkout already has commits; inspect before publishing.');
   if (git(['remote'])) throw new Error('A remote is already configured; inspect before publishing.');
@@ -76,6 +83,7 @@ try {
   git(['add', '--', '.gitignore', 'README.md', 'dist', 'migration-report.json', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'scripts', 'snapshot', 'src']);
   git(['-c', 'user.name=' + (account.name || account.login), '-c', `user.email=${account.id}+${account.login}@users.noreply.github.com`, 'commit', '-m', 'Import CMS-free static Treehouse Camp website']);
   git(['remote', 'add', 'origin', repo.clone_url]);
+  }
   git(['push', '--set-upstream', 'origin', 'HEAD:refs/heads/main'], true);
   const localSha = git(['rev-parse', 'HEAD']);
   const remote = await api(repoPath + '/commits/main');
