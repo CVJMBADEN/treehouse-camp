@@ -22,6 +22,16 @@ Set the publish/output directory to `dist`. No build command is needed when uplo
 
 The ZIP archive contains the **contents** of `dist/`, with `index.html` at its root. Extract it into your web root. Publishing and changing the domain/DNS are separate from this local conversion; the live website has not been changed.
 
+## GitHub Pages
+
+The `.github/workflows/deploy-pages.yml` workflow publishes the ready-to-host `dist/` directory whenever its files change on `main`. It can also be run manually from the Actions tab. It uploads only the static website; the original snapshot and development scripts are not included in the published website.
+
+In repository **Settings → Pages**, choose **GitHub Actions** as the build and deployment source. GitHub Pages must be supported by the organization's plan for this private repository; the workflow does not change repository visibility. No personal access token is stored in the workflow: it uses GitHub's temporary `GITHUB_TOKEN` and deployment identity.
+
+For `CVJMBADEN/treehouse-camp`, the default project address is **https://cvjmbaden.github.io/treehouse-camp/**. The address **https://treehouse-camp.github.io/** requires ownership of an account or organization named `treehouse-camp` and a repository under it named `treehouse-camp.github.io`. A GitHub Pages subdomain cannot be chosen independently of the account or organization name.
+
+The workflow deploys the checked-in export without rebuilding it, so direct edits in `dist/` are published as written. If you edit the saved snapshot or `src/`, run the optional build and checks below and commit the regenerated `dist/` files before deploying.
+
 ## Included behavior
 
 - Expandable desktop navigation and an accessible mobile menu.

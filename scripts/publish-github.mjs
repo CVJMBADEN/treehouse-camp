@@ -26,8 +26,12 @@ async function api(route, options = {}) {
     },
     signal: AbortSignal.timeout(60000),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(`GitHub ${response.status}: ${data.message}`);
+  const data = response.status === 204 ? null : await response.json();
+  if (!response.ok) {
+    const error = new Error(`GitHub ${response.status} for ${route}: ${data.message}`);
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }
 
@@ -50,6 +54,36 @@ try {
   console.log('Authenticated GitHub account: ' + account.login);
   const repoPath = '/repos/CVJMBADEN/treehouse-camp';
   const repo = await api(repoPath);
+  async function configurePages() {
+    let pages;
+    try { pages = await api(repoPath + '/pages'); }
+    catch (error) {
+      if (error.status !== 404) throw error;
+      pages = await api(repoPath + '/pages', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ build_type: 'workflow' }),
+      });
+    }
+    if (pages.build_type !== 'workflow') {
+      await api(repoPath + '/pages', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ build_type: 'workflow' }),
+      });
+      pages = await api(repoPath + '/pages');
+    }
+    console.log(JSON.stringify({ pagesUrl: pages.html_url, buildType: pages.build_type, status: pages.status }, null, 2));
+  }
+  if (process.argv.includes('--pages-status')) {
+    const pages = await api(repoPath + '/pages');
+    console.log(JSON.stringify({ pagesUrl: pages.html_url, buildType: pages.build_type, status: pages.status }, null, 2));
+    const runs = await api(repoPath + '/actions/workflows/deploy-pages.yml/runs?per_page=3');
+    console.log(JSON.stringify(runs.workflow_runs.map(run => ({ url: run.html_url, status: run.status, conclusion: run.conclusion, sha: run.head_sha })), null, 2));
+    process.exit(0);
+  }
+  if (process.argv.includes('--enable-pages-only')) {
+    await configurePages();
+    process.exit(0);
+  }
   if (process.argv.includes('--check-only')) {
     console.log(JSON.stringify({ repository: repo.full_name, private: repo.private, defaultBranch: repo.default_branch, accountPermissions: repo.permissions, sizeKiB: repo.size }, null, 2));
     console.log('Read-only access check completed. No files uploaded or repository changes made.');
@@ -93,6 +127,7 @@ try {
   const count = tree.tree.filter(e => e.type === 'blob' && e.path.startsWith('dist/')).length;
   if (count !== 231) throw new Error('Unexpected deployed file count: ' + count);
   console.log(JSON.stringify({ url: repo.html_url, private: repo.private, branch: 'main', commit: localSha, staticFiles: count, totalFiles: tree.tree.filter(e => e.type === 'blob').length }, null, 2));
+  if (process.argv.includes('--setup-pages')) await configurePages();
 } catch (error) {
   console.error(redact(error.message));
   process.exitCode = 1;
